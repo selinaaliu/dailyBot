@@ -1,7 +1,7 @@
 {
   "name": "selinaDailyBot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A bot to answer your daily questions.",
   "main": "index.js",
   "scripts": {
     "start": "node .",

@@ -8,7 +8,7 @@ console.log('bot server started...');
 
 bot.onText(/^\/say_hello(.+)$/, function (msg, match) {
     var name = match[1];
-    var string = '\n What are you up to today?';
+    var string = '\nWhat are you up to today?';
     bot.sendMessage(msg.chat.id, 'Sup' + name + string)
     .then(function () {
         // reply sent!
@@ -23,8 +23,8 @@ bot.onText(/^\/quote$/, function (msg, match) {
     .end(function (result) {
           console.log(result.status, result.headers, result.body);
           var data = JSON.parse(result.body);
-          console.log("the quote: " + data.quote);
-          bot.sendMessage(msg.chat.id, data.quote).then(function () {
+          var string = '"' + data.quote + '"' + '\n- ' + data.author;
+          bot.sendMessage(msg.chat.id, string).then(function () {
               // reply sent!
           });
     });
