@@ -9,26 +9,31 @@ var bot = new Bot(botToken, {polling: true});
 
 console.log('bot server started...');
 
-bot.onText(/^\/say_hello(.+)$/, function (msg, match) {
-    var name = match[1];
-    var string = '\nWhat are you up to today?';
-    bot.sendMessage(msg.chat.id, 'Sup' + name + string)
-    .then(function () {
-        // reply sent!
-    });
+/*  Command: /iam <name>
+ *  For user to introduce himself/herself.
+ *  Bot replies with a greeting and a question.
+ */
+bot.onText(/^\/iam(.+)$/, function (msg, match) {
+    //TODO: strip left-trailing spaces from name
+    var name = match[1].trim();
+    name = name.charAt(0).toUpperCase() + name.substring(1);
+    var string = '\nWhat would you like to do today?';
+    var reply = 'Sup ' + name + '!' + string;
+    bot.sendMessage(msg.chat.id, reply);
 });
 
+/*  Command: /quote
+ *  Bot replies with a random famous quote. 
+ */
 bot.onText(/^\/quote$/, function (msg, match) {
     unirest.post(quoteUrl)
     .header("X-Mashape-Key", quoteKey)
     .header("Content-Type", "application/x-www-form-urlencoded")
     .header("Accept", "application/json")
     .end(function (result) {
-          console.log(result.status, result.headers, result.body);
-          var data = JSON.parse(result.body);
-          var string = '"' + data.quote + '"' + '\n- ' + data.author;
-          bot.sendMessage(msg.chat.id, string).then(function () {
-              // reply sent!
-          });
+        console.log(result.status, result.headers, result.body);
+        var data = JSON.parse(result.body);
+        var string = '"' + data.quote + '"' + '\n- ' + data.author;
+        bot.sendMessage(msg.chat.id, string);
     });
 });
