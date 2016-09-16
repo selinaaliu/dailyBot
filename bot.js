@@ -37,3 +37,48 @@ bot.onText(/^\/quote$/, function (msg, match) {
         bot.sendMessage(msg.chat.id, string);
     });
 });
+
+// keyboard configurations for study session settings
+var hours_keyboard = [[
+    {text: "1hr", callback_data: '1'}, 
+    {text: "2hrs", callback_data: '2'}, 
+    {text: "3hrs", callback_data: '3'}
+    ]];
+var reply_markup = JSON.stringify({
+    inline_keyboard: hours_keyboard
+});
+var opts = {'reply_markup':reply_markup};
+
+/*  Command: /study
+ *  For user to start a timed study session.
+ *  Bot responds with a prompt to set length of study session.
+ */
+bot.onText(/^\/study$/, function(msg, match) {
+    var chatId = msg.chat.id;
+    var qn = "Ok, how long would you like to study for?";
+    bot.sendMessage(chatId, qn, opts);
+});
+
+/* After the study session starts, Bot messages user at 30min 
+ * intervals to remind user to take a break.
+ */
+bot.on('callback_query', function (msg) {
+    console.log("callback_query", msg);
+    
+    //TODO: verify that this is callback_query to qn about how many hours to study
+    var numHours = msg.data;
+    var reply = "Ok, your " + numHours + " hours starts now!";
+    bot.answerCallbackQuery(msg.id, reply);
+    
+    // set study breaks 
+    var numBreaks = numHours / 0.5;
+    numBreaks = 3;
+    var interval = 30 * 60 * 1000; // 30 mins
+    var timer = setInterval(breakReminder, interval);
+    function breakReminder () {
+        bot.sendMessage(msg.from.id, 'Time to take a study break!');
+        numBreaks--;
+        //TODO: tell user how much longer to go
+        if (numBreaks === 0) clearInterval(timer);
+    };
+});
