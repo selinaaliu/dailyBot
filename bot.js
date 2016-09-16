@@ -1,8 +1,11 @@
-var token = "217076975:AAGu6shAF25MrRZvCCiX2fALTJk1cbLU-2E";
-
 var Bot = require('node-telegram-bot-api');
 var unirest = require('unirest');
-var bot = new Bot(token, {polling: true});
+var config = require('./config.json');
+var botToken = config.TelegramBotToken;
+var quoteUrl = config.MashapeApiUrl;
+var quoteKey = config.MashapeApiKey;
+
+var bot = new Bot(botToken, {polling: true});
 
 console.log('bot server started...');
 
@@ -16,8 +19,8 @@ bot.onText(/^\/say_hello(.+)$/, function (msg, match) {
 });
 
 bot.onText(/^\/quote$/, function (msg, match) {
-    unirest.post("https://andruxnet-random-famous-quotes.p.mashape.com/?cat=famous")
-    .header("X-Mashape-Key", "zBULkZgMzamshDNXKLHPRvoNv7ipp1haR75jsnIhDyzxLGjO7w")
+    unirest.post(quoteUrl)
+    .header("X-Mashape-Key", quoteKey)
     .header("Content-Type", "application/x-www-form-urlencoded")
     .header("Accept", "application/json")
     .end(function (result) {
