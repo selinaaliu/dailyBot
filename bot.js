@@ -1,6 +1,8 @@
 var Bot = require('node-telegram-bot-api');
 var unirest = require('unirest');
 var config = require('./config.json');
+var vulgarities = require('./vulgarities.json');
+var vulgarRegex = new RegExp(vulgarities.words);
 var botToken = config.TelegramBotToken;
 var quoteUrl = config.MashapeApiUrl;
 var quoteKey = config.MashapeApiKey;
@@ -81,4 +83,23 @@ bot.on('callback_query', function (msg) {
         //TODO: tell user how much longer to go
         if (numBreaks === 0) clearInterval(timer);
     };
+});
+/* Detects vulgarities and swearing in conversation
+ * TODO: not working for group chat yet
+ * TODO: implement a way to store/reset swear count
+ */
+var swearCount = {};
+bot.onText(vulgarRegex, function (msg) {
+    var content = msg.text;
+    var chatId = msg.chat.id;
+    var name = msg.chat.first_name;
+    var resp = "";
+    if (!(chatId in swearCount)) {
+        swearCount[chatId] = 0;
+        resp = "Please refrain from using vulgarities, "+ name + "!";
+    } else {
+        resp = "You are swearing again, "+ name + "!";
+    }
+    swearCount[chatId]++;
+    bot.sendMessage(chatId, resp);
 });
