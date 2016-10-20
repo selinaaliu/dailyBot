@@ -40,6 +40,26 @@ bot.onText(/^\/quote$/, function (msg, match) {
     });
 });
 
+// TODO: add bible verse source api to bibleUrl
+var bibleUrl = "";
+
+/*  Command: /bible
+ *  Bot replies with the bible verse queried
+ *  TODO: make valid REST request to api endpoint
+ *  TODO: transform response for formatted display
+ */
+bot.onText(/^\/bible(.+)/, function (msg, match) {
+    var verseArgs = match[1];
+    verseArgs = verseArgs.trim();
+    console.log(verseArgs);
+    verseQuery = bibleUrl + verseArgs;
+    /*
+    unirest.post(verseQuery).end(function (result) {
+        console.log(result);
+    });
+    */
+});
+
 // keyboard configurations for study session settings
 var hours_keyboard = [[
     {text: "1hr", callback_data: '1'}, 
